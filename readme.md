@@ -1,0 +1,1 @@
+A simulation of a power generator that powers a shield taking constant hits from some kind of bombardment.
