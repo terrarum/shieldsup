@@ -16,13 +16,13 @@ game.structureModels = {
     shieldEmitter: function () {
         return {
             maxStrength: 1000,  // 'Strength' of the shield; its HP. @TODO Current strength calculated from available MW?
-            maxPower: 100,      // Maximum MW/s.
-            minPower: 10        // Minimum MW/s required to generate a shield.
+            maxPower: 100,      // Maximum MW.
+            minPower: 10        // Minimum MW required to generate a shield.
         }
     },
     generator: function () {
         return {
-            maxOutput: 50,      // MW/s generated.
+            maxOutput: 50,      // MW generated.
             maxHealth: 100,
             health: 100,
             generate: function(delta) {
@@ -32,7 +32,12 @@ game.structureModels = {
     },
     capacitor: function() {
         return {
-            capacity: 100
+            maxCapacity: 200,
+            chargeRate: 400,
+            currentCapacity: 0,
+            charge: function(charge) {
+                this.currentCapacity = this.currentCapacity + charge > this.maxCapacity ? this.maxCapacity : this.currentCapacity + charge;
+            }
         }
     },
     battery: function() {
@@ -55,7 +60,25 @@ game.structureModels = {
                     this.currentCapacity += power;
                     return 0;
                 }
-
+            },
+            drainPower: function(charge) {
+                // If battery is empty, return 0.
+                if (this.currentCapacity <= 0) {
+                    return 0;
+                }
+                // If battery has more charge than is being requested,
+                // return requested value.
+                else if (this.currentCapacity - charge > 0) {
+                    this.currentCapacity -= charge;
+                    return charge;
+                }
+                // If battery has less charge than is being requested,
+                // return everything that's left.
+                else if (this.currentCapacity < charge) {
+                    charge -= this.currentCapacity
+                    this.currentCapacity = 0;
+                    return charge;
+                }
             }
         }
     }
