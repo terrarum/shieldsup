@@ -15,9 +15,35 @@ game.fn.timestamp = function() {
 game.structureModels = {
     shieldEmitter: function () {
         return {
-            maxStrength: 1000,  // 'Strength' of the shield; its HP. @TODO Current strength calculated from available MW?
-            maxPower: 100,      // Maximum MW.
-            minPower: 10        // Minimum MW required to generate a shield.
+            maxStrength: 100,      // 'Strength' of the shield; its HP.
+            currentStrength: 0,
+            maxCapacity: 100,       // Maximum MW.
+            minCapacity: 10,        // Minimum MW required to generate a shield.
+            currentCapacity: 0,
+            chargeRate: 10,
+            conversionRate: 15,      // MW to SHIELD
+            charge: function(charge) {
+                this.currentCapacity = this.currentCapacity + charge > this.maxCapacity ? this.maxCapacity : this.currentCapacity + charge;
+            },
+            emit: function(delta) {
+                // Do nothing if currentCapacity is below min + conversionrate.
+                if (this.currentCapacity < this.minCapacity + this.conversionRate) {
+                    return;
+                }
+                var conversionAmount = this.conversionRate * delta;
+                // If currentCapacity - conversion is less than zero, currentCapacity is zero;
+                // Update conversionAmount accordingly.
+                if (this.currentCapacity - this.conversionRate * delta < 0) {
+                    conversionAmount = this.currentCapacity;
+                }
+                if (this.currentStrength < this.maxStrength) {
+                    this.currentCapacity -= conversionAmount;
+                    this.currentStrength += conversionAmount;
+                    if (this.currentStrength > this.maxStrength) {
+                        this.currentStrength = this.maxStrength;
+                    }
+                }
+            }
         }
     },
     generator: function () {
@@ -32,11 +58,31 @@ game.structureModels = {
     },
     capacitor: function() {
         return {
-            maxCapacity: 200,
-            chargeRate: 400,
+            maxCapacity: 10,
+            chargeRate: 10,
             currentCapacity: 0,
             charge: function(charge) {
                 this.currentCapacity = this.currentCapacity + charge > this.maxCapacity ? this.maxCapacity : this.currentCapacity + charge;
+            },
+            drainPower: function(charge) {
+                console.log("Current Capacity:", this.currentCapacity)
+                // If battery is empty, return 0.
+                if (this.currentCapacity <= 0) {
+                    return 0;
+                }
+                // If battery has more charge than is being requested,
+                // return requested value.
+                else if (this.currentCapacity - charge >= 0) {
+                    this.currentCapacity -= charge;
+                    return charge;
+                }
+                // If battery has less charge than is being requested,
+                // return everything that's left.
+                else if (this.currentCapacity < charge) {
+                    charge -= this.currentCapacity;
+                    this.currentCapacity = 0;
+                    return charge;
+                }
             }
         }
     },
