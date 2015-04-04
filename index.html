@@ -11,20 +11,64 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12">
-                <h1>Shield's Up</h1>
+                <h1>Shield's Up!</h1>
             </div>
         </div>
     </div>
 
     <div class="container">
         <div class="row">
-
+            <div class="col-sm-3">
+                <table class="table">
+                    <tr>
+                        <th>Type</th>
+                        <th>Count</th>
+                    </tr>
+                    <tr>
+                        <td>Emitters</td>
+                        <td class="js-emitter-count"></td>
+                    </tr>
+                    <tr>
+                        <td>Capacitors</td>
+                        <td class="js-capacitor-count"></td>
+                    </tr>
+                    <tr>
+                        <td>Batteries</td>
+                        <td class="js-battery-count"></td>
+                    </tr>
+                    <tr>
+                        <td>Generators</td>
+                        <td class="js-generator-count"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-3">
+                <table class="table">
+                    <tr>
+                        <th>Stats</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td>MW/s</td>
+                        <td class="js-generated-count"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-sm-6">
+                <h3>Batteries</h3>
+                <div class="js-batteries"></div>
+            </div>
         </div>
     </div>
 
+    <!-- Libs. -->
     <script src="lib/jquery-2.1.3.min.js"></script>
     <script src="lib/lodash.min.js"></script>
     <script src="lib/fpsmeter.min.js"></script>
+
+    <!-- Source. -->
+    <script src="init.js"></script>
+    <script src="gameloop.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
